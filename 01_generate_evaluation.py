@@ -9,12 +9,13 @@ import pandas as pd
 def askGpt(prompt):
     # Streamlit Secrets에서 API 키 가져오기
     api_key = st.secrets["OPENAI_API_KEY"]
-    client = openai.OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4o-2024-08-06",
+    openai.api_key = api_key  # API 키 설정
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-2024-08-06",  # 또는 사용 가능한 최신 모델로 변경
         messages=[{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content
+
 
 def load_data(file_path):
     return pd.read_csv(file_path)
@@ -28,8 +29,12 @@ def main():
     st.markdown('---')
 
     # 데이터 불러오기
-    data = load_data("data.csv")
-    
+    try:
+        data = load_data("data.csv")  # data.csv 파일이 존재해야 함
+    except FileNotFoundError:
+        st.error("data.csv 파일을 찾을 수 없습니다. 올바른 위치에 파일을 추가하세요.")
+        return
+
     col1, col2 = st.columns(2)
     with col1:
         grade = st.selectbox("학년군", ["3-4학년군", "5-6학년군"])
@@ -77,12 +82,14 @@ def main():
           - 평가 요소:
           - 평가 방법:
           - 평가 기준:
-          
         """
-        
+
         # GPT에 프롬프트 전달 및 응답 출력
-        response = askGpt(prompt, st.session_state["OPENAI_API"])
-        st.info(response)
+        try:
+            response = askGpt(prompt)
+            st.info(response)
+        except Exception as e:
+            st.error(f"GPT 요청 중 오류가 발생했습니다: {e}")
 
 if __name__ == '__main__':
     main()
