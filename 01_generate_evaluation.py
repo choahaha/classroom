@@ -87,7 +87,7 @@ def main():
         
         # GPT에 프롬프트 전달 및 응답 출력
         try:
-            response = askGpt(prompt)
+            response = askGpt(prompt, api_key)  # <-- api_key까지 함께 전달
             st.info(response)
         except Exception as e:
             st.error(f"GPT 요청 중 오류가 발생했습니다: {e}")
