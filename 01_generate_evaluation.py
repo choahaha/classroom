@@ -5,16 +5,16 @@ import openai
 import pandas as pd
 
 ##### 기능 구현 함수 #####
-
-def askGpt(prompt):
-    # Streamlit Secrets에서 API 키 가져오기
-    api_key = st.secrets["OPENAI_API_KEY"]
-    openai.api_key = api_key  # API 키 설정
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-2024-08-06",  # 또는 사용 가능한 최신 모델로 변경
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
+def askGpt(prompt, api_key):
+    openai.api_key = api_key
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-2024-08-06",  # 또는 gpt-4
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"GPT 요청 중 오류가 발생했습니다: {e}"
 
 
 def load_data(file_path):
