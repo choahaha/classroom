@@ -83,7 +83,7 @@ def main():
           - 평가 기준:
         """
 
-        st.info(askGpt(prompt,st.session_state["OPENAI_API"]))
+        st.info(askGpt(prompt,api_key))
         
         # GPT에 프롬프트 전달 및 응답 출력
         try:
