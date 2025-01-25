@@ -4,6 +4,8 @@ import streamlit as st
 import openai
 import pandas as pd
 
+API_KEY = st.secrets["OPENAI_API_KEY"]
+
 ##### 기능 구현 함수 #####
 def askGpt(prompt, api_key):
     openai.api_key = api_key
