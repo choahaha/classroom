@@ -1,21 +1,20 @@
 ##### 기본 정보 입력 #####
 # Streamlit 패키지 추가
 import streamlit as st
+# OpenAI 패키기 추가
 import openai
 import pandas as pd
 
+api_key = st.secrets["OPENAI_API_KEY"]
+
 ##### 기능 구현 함수 #####
-
-def askGpt(prompt):
-    # Streamlit Secrets에서 API 키 가져오기
-    api_key = st.secrets["OPENAI_API_KEY"]
-    openai.api_key = api_key  # API 키 설정
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-2024-08-06",  # 또는 사용 가능한 최신 모델로 변경
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
-
+def askGpt(prompt,apikey):
+    client = openai.OpenAI(api_key = apikey)
+    response = client.chat.completions.create(
+    model="gpt-4o-2024-08-06",
+    messages=[{"role": "user", "content": prompt}])
+    gptResponse = response.choices[0].message.content
+    return gptResponse
 
 def load_data(file_path):
     return pd.read_csv(file_path)
@@ -23,8 +22,8 @@ def load_data(file_path):
 ##### 메인 함수 #####
 def main():
     st.set_page_config(page_title="과정중심평가 AI 제작툴")
-    
-    # 메인공간
+
+    #메인공간
     st.header("😎 과정중심평가 AI 제작툴")
     st.markdown('---')
 
@@ -84,6 +83,8 @@ def main():
           - 평가 기준:
         """
 
+        st.info(askGpt(prompt,st.session_state["OPENAI_API"]))
+        
         # GPT에 프롬프트 전달 및 응답 출력
         try:
             response = askGpt(prompt)
